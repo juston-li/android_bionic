@@ -482,16 +482,16 @@ ENTRY(memcpy)
         blo         4f
 
         /* preload all the cache lines we need.
-         * NOTE: the number of pld below depends on PREFETCH_DISTANCE,
-         * ideally would would increase the distance in the main loop to
+         * NOTE: the number of pld below depends on CACHE_LINE_SIZE,
+         * ideally this would increase the distance in the main loop to
          * avoid the goofy code below. In practice this doesn't seem to make
          * a big difference.
          */
-        pld         [r1, #(PREFETCH_DISTANCE)]
+        pld         [r1, #(CACHE_LINE_SIZE * 2)]
 
 1:      /* The main loop copies 32 bytes at a time */
         vld1.8      {d0  - d3},   [r1]!
-        pld         [r1, #(PREFETCH_DISTANCE)]
+        pld         [r1, #(CACHE_LINE_SIZE * 2)]
         subs        r2, r2, #32
         vst1.8      {d0  - d3},   [r0, :128]!
         bhs         1b
@@ -513,7 +513,7 @@ ENTRY(memcpy)
 1:      /* The main loop copies 64 bytes at a time */
         vld1.8      {d0  - d3},   [r1]!
         vld1.8      {d4  - d7},   [r1]!
-        pld         [r1, #(PREFETCH_DISTANCE)]
+        pld         [r1, #(CACHE_LINE_SIZE * 3)]
         subs        r2, r2, #64
         vst1.8      {d0  - d3},   [r0, :128]!
         vst1.8      {d4  - d7},   [r0, :128]!
