@@ -429,11 +429,9 @@ memcpy:
 #ifdef HAVE_32_BYTE_CACHE_LINE
 /* a prefetch distance of 2 cache-lines */
 #define CACHE_LINE_SIZE     32
-#define PREFETCH_DISTANCE   (CACHE_LINE_SIZE*2)
 #else
 /* a prefetch distance of 4 cache-lines works best experimentally */
 #define CACHE_LINE_SIZE     64
-#define PREFETCH_DISTANCE   (CACHE_LINE_SIZE*4)
 #endif
 
 ENTRY(memcpy)
@@ -450,6 +448,11 @@ ENTRY(memcpy)
         /* do we have at least 16-bytes to copy (needed for alignment below) */
         cmp         r2, #16
         blo         5f
+
+        /* check if buffers are aligned. If so, run arm-only version */
+        eor         r3, r0, r1
+        ands        r3, r3, #0x3
+        beq         11f
 
         /* align destination to cache-line for the write-buffer */
         rsb         r3, r0, #0
@@ -510,7 +513,12 @@ ENTRY(memcpy)
 1:      /* The main loop copies 64 bytes at a time */
         vld1.8      {d0 - d3}, [r1]!
         vld1.8      {d4 - d7}, [r1]!
+#ifdef  HAVE_32_BYTE_CACHE_LINE
+        pld         [r1, #(CACHE_LINE_SIZE * 2)]
         pld         [r1, #(CACHE_LINE_SIZE * 3)]
+#else
+        pld         [r1, #(CACHE_LINE_SIZE * 3)]
+#endif
         subs        r2, r2, #64
         vst1.8      {d0 - d3}, [r0, :128]!
         vst1.8      {d4 - d7}, [r0, :128]!

@@ -160,6 +160,11 @@ ifeq ($(TARGET_ARCH),arm)
 	src/s_scalbnf.c \
 	src/e_sqrtf.c
 
+  ifeq ($(ARCH_ARM_HAVE_ARMV7A),true)
+    libm_common_src_files += \
+      arm/e_pow.S
+  endif
+
   ifeq ($(TARGET_USE_KRAIT_BIONIC_OPTIMIZATION),true)
     libm_common_src_files += \
 	  arm/s_cos.S \
@@ -170,12 +175,7 @@ ifeq ($(TARGET_ARCH),arm)
 	  src/s_cos.c \
 	  src/s_sin.c
   endif
-
-  ifeq ($(ARCH_ARM_HAVE_ARMV7A),true)
-    libm_common_src_files += \
-          arm/e_pow.S
-  endif
-
+  
   libm_common_includes = $(LOCAL_PATH)/arm
 endif
 
