@@ -60,6 +60,7 @@ static char rcsid[] = "$FreeBSD: src/lib/msun/src/e_pow.c,v 1.11 2005/02/04 18:2
 
 #include "math.h"
 #include "math_private.h"
+#include <machine/cpu-features.h>
 
 #if defined(__ARM_NEON__)
 #if defined(KRAIT_NO_AAPCS_VFP_MODE)
