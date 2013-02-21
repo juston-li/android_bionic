@@ -398,7 +398,7 @@ libc_common_src_files += arch-arm/bionic/strlen.c.arm
 endif
 
 # We have a special memcpy for A15 currently
-ifeq ($(TARGET_ARCH_VARIANT_CPU),cortex-a15 || $(TARGET_USE_KRAIT_BIONIC_OPTIMIZATION),true)
+ifeq ($(TARGET_ARCH_VARIANT_CPU),cortex-a15)
 libc_common_src_files += arch-arm/bionic/memcpy-a15.S
 else
 libc_common_src_files += arch-arm/bionic/memcpy.S
