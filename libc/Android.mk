@@ -398,15 +398,16 @@ libc_common_src_files += arch-arm/bionic/strlen.c.arm
 endif
 
 # We have a special memcpy for A15 currently
-ifeq ($(TARGET_ARCH_VARIANT_CPU),cortex-a15)
-libc_common_src_files += arch-arm/bionic/memcpy-a15.S
-else
+#ifeq ($(TARGET_ARCH_VARIANT_CPU),cortex-a15)
+#libc_common_src_files += arch-arm/bionic/memcpy-a15.S
+#else
 libc_common_src_files += arch-arm/bionic/memcpy.S
-endif
+#endif
 
 # Check if we want a neonized version of memmove instead of the
 # current ARM version
 ifeq ($(ARCH_ARM_HAVE_NEON),true)
+
  libc_common_src_files += \
 	arch-arm/bionic/memmove.S
  else # Other ARM
@@ -504,6 +505,10 @@ libc_common_src_files += \
 	arch-mips/bionic/setjmp.S \
 	arch-mips/bionic/sigsetjmp.S \
 	arch-mips/bionic/vfork.S
+
+ifeq ($(ARCH_ARM_HAVE_ARMV7A),true)
+libc_common_src_files += arch-arm/bionic/bzero.S
+endif
 
 libc_common_src_files += \
 	arch-mips/string/memset.S \
@@ -631,6 +636,9 @@ ifeq ($(TARGET_ARCH),arm)
   endif
   ifeq ($(TARGET_CORTEX_CACHE_LINE_32),true)
     libc_common_cflags += -DCORTEX_CACHE_LINE_32
+  endif
+  ifeq ($(ARCH_ARM_HAVE_ARMV7A),true)
+    libc_common_cflags += -DNEON_UNALIGNED_ACCESS -DNEON_MEMSET_DIVIDER=132
   endif
 else # !arm
   ifeq ($(TARGET_ARCH),x86)

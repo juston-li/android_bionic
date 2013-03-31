@@ -175,7 +175,7 @@ ifeq ($(TARGET_ARCH),arm)
 	  src/s_cos.c \
 	  src/s_sin.c
   endif
-
+  
   libm_common_includes = $(LOCAL_PATH)/arm
 
 else

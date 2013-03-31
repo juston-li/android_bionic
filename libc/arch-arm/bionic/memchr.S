@@ -68,7 +68,7 @@ memchr:
 	and	r1,r1,#0xff	@ Don't think we can trust the caller to actually pass a char
 
 	cmp	r2,#16		@ If it's short don't bother with anything clever
-	blt	20f
+	blt	20f 
 
 	tst	r0, #7		@ If it's already aligned skip the next bit
 	beq	10f
